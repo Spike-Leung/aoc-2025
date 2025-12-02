@@ -1,12 +1,36 @@
+import math
+
 with open("./input.txt", "r", encoding="utf-8") as file:
-  init = 50
+  currentPoint = 50
   count = 0
   for line in file:
+    move = int(line[1:])
     if line[0] == 'L':
-      init -= (int(line[1:]) % 100)
-      init = init if init >= 0 else (100 + init)
+      currentPoint -= (move % 100)
+      currentPoint = currentPoint if currentPoint >= 0 else (100 + currentPoint)
     else:
-      init = ((init + int(line[1:])) % 100)
-    if (init % 100) == 0:
+      currentPoint = ((currentPoint + move) % 100)
+    if (currentPoint % 100) == 0:
       count += 1
-  print(f'result: {count}')
+  print(f'part1 result: {count}')
+
+with open("./input.txt", "r", encoding="utf-8") as file:
+  currentPoint = 50
+  count = 0
+  for line in file:
+    move = int(line[1:])
+    count += int(move / 100)
+    if (line[0] == 'L'):
+      prevPoint = currentPoint
+      currentPoint -= (move % 100)
+      currentPoint = currentPoint if currentPoint >= 0 else (100 + currentPoint)
+
+      if currentPoint > prevPoint:
+        count += 1
+    else:
+      prevPoint = currentPoint
+      currentPoint = ((currentPoint + move) % 100)
+
+      if currentPoint < prevPoint:
+        count += 1
+  print(f'part2 result: {count}')
