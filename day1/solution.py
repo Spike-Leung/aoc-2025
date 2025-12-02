@@ -1,5 +1,4 @@
-import math
-
+# part1
 with open("./input.txt", "r", encoding="utf-8") as file:
   currentPoint = 50
   count = 0
@@ -14,6 +13,7 @@ with open("./input.txt", "r", encoding="utf-8") as file:
       count += 1
   print(f'part1 result: {count}')
 
+#part2
 with open("./input.txt", "r", encoding="utf-8") as file:
   currentPoint = 50
   count = 0
