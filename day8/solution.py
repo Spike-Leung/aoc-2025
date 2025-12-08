@@ -15,7 +15,8 @@ def get_distance_dict_sort_by_distance_asc(positions):
       distance_dict[(positions[i], positions[j])] = distance_in_3d(positions[i], positions[j])
   return dict(sorted(distance_dict.items(), key=lambda item: item[1]))
 
-def connect_circuits(distance_dict, connect_count = None):
+
+def connect_circuits(distance_dict, connect_count=None):
   circuits = []
   distance_dict = list(distance_dict)[:connect_count] if connect_count is not None else distance_dict
   for point1, point2 in distance_dict:
@@ -48,9 +49,8 @@ def part1():
     circuits = connect_circuits(distance_dict, 1000)
     circuits = sorted(circuits, key=len, reverse=True)
     product = math.prod(len(s) for s in circuits[:3])
-    print(f'part1 result: {product}')
+    print(f"part1 result: {product}")
 
-# part1()
 
 def find_last_connect_that_form_a_single_circuit(distance_dict, point_count_total):
   circuits = []
@@ -85,6 +85,8 @@ def part2():
     point1, point2 = find_last_connect_that_form_a_single_circuit(distance_dict, len(positions))
     point1_x = int(point1.split(",")[0])
     point2_x = int(point2.split(",")[0])
-    print(f'part2 result: {point1_x * point2_x}')
+    print(f"part2 result: {point1_x * point2_x}")
 
+
+part1()
 part2()
