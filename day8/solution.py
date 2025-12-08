@@ -50,4 +50,41 @@ def part1():
     product = math.prod(len(s) for s in circuits[:3])
     print(f'part1 result: {product}')
 
-part1()
+# part1()
+
+def find_last_connect_that_form_a_single_circuit(distance_dict, point_count_total):
+  circuits = []
+  for point1, point2 in list(distance_dict):
+    idx1 = idx2 = None
+    for i, circuit in enumerate(circuits):
+      if point1 in circuit:
+        idx1 = i
+      if point2 in circuit:
+        idx2 = i
+    if idx1 is not None and idx2 is not None:
+      if idx1 != idx2:
+        circuits[idx1].update(circuits[idx2])
+        del circuits[idx2]
+    elif idx1 is not None:
+      circuits[idx1].add(point2)
+    elif idx2 is not None:
+      circuits[idx2].add(point1)
+    else:
+      circuits.append({point1, point2})
+    if len(circuits) == 1 and len(circuits[0]) == point_count_total:
+      return (point1, point2)
+  return None
+
+
+def part2():
+  with open("input.txt", "r", encoding="utf-8") as file:
+    positions = []
+    for line in file:
+      positions.append(line.strip())
+    distance_dict = get_distance_dict_sort_by_distance_asc(positions)
+    point1, point2 = find_last_connect_that_form_a_single_circuit(distance_dict, len(positions))
+    point1_x = int(point1.split(",")[0])
+    point2_x = int(point2.split(",")[0])
+    print(f'part2 result: {point1_x * point2_x}')
+
+part2()
