@@ -3,19 +3,23 @@ def calc_area(position1, position2):
   x2, y2 = map(int, position2.split(","))
   return (abs(x1 - x2) + 1) * (abs(y1 - y2) + 1)
 
-
-def part1():
+def parse_positions():
   with open("input.txt", "r", encoding="utf-8") as file:
     positions = []
     for line in file:
       positions.append(line.strip())
+    return positions
+
+def calc_all_area_in_positions(positions):
     areas = []
     for i in range(len(positions)):
       for j in range(i + 1, len(positions)):
-        areas.append(((positions[i], positions[j]), calc_area(positions[i], positions[j])))
-    max_area = sorted(areas, key=lambda item: item[1], reverse=True)[0][1]
-    print(f"part1 result: {max_area}")
+        areas.append(calc_area(positions[i], positions[j]))
+    return areas
 
+def part1():
+    max_area = sorted(calc_all_area_in_positions(parse_positions()), reverse=True)[0]
+    print(f"part1 result: {max_area}")
 
 part1()
 
@@ -86,11 +90,11 @@ def is_rectangle_inside_polygon(min_x, max_x, min_y, max_y, polygon):
         f"{max_x},{min_y}",  # 右下角
         f"{max_x},{max_y}"   # 右上角
     ]
-    
+
     for vertex in vertices:
         if not point_in_polygon(vertex, polygon):
             return False
-    
+
     # 预计算多边形的所有边
     n = len(polygon)
     edges = []
@@ -98,7 +102,7 @@ def is_rectangle_inside_polygon(min_x, max_x, min_y, max_y, polygon):
         x1, y1 = map(int, polygon[k].split(","))
         x2, y2 = map(int, polygon[(k + 1) % n].split(","))
         edges.append((x1, y1, x2, y2))
-    
+
     # 检查矩形的每条边是否与多边形的任何边相交（除了在端点处）
     # 矩形的四条边：
     rect_edges = [
@@ -107,7 +111,7 @@ def is_rectangle_inside_polygon(min_x, max_x, min_y, max_y, polygon):
         (min_x, min_y, min_x, max_y),  # 左边
         (max_x, min_y, max_x, max_y)   # 右边
     ]
-    
+
     for rx1, ry1, rx2, ry2 in rect_edges:
         # 对于矩形的每条边，检查是否与多边形的任何边相交
         for ex1, ey1, ex2, ey2 in edges:
@@ -115,13 +119,13 @@ def is_rectangle_inside_polygon(min_x, max_x, min_y, max_y, polygon):
             if (rx1 == ex1 and ry1 == ey1) or (rx1 == ex2 and ry1 == ey2) or \
                (rx2 == ex1 and ry2 == ey1) or (rx2 == ex2 and ry2 == ey2):
                 continue
-            
+
             # 检查两条线段是否相交
             # 由于所有边都是水平或垂直的，我们可以简化
             # 矩形边：水平或垂直
             rect_horizontal = (ry1 == ry2)
             edge_horizontal = (ey1 == ey2)
-            
+
             if rect_horizontal and edge_horizontal:
                 # 两条水平线：如果y坐标相同且x范围重叠，则重叠
                 if ry1 == ey1:
@@ -161,23 +165,19 @@ def is_rectangle_inside_polygon(min_x, max_x, min_y, max_y, polygon):
                         if not ((rx1 == rx1 and ey1 == ry1) or (rx1 == rx2 and ey1 == ry2) or \
                                 (rx1 == ex1 and ey1 == ey1) or (rx1 == ex2 and ey1 == ey2)):
                             return False
-    
+
     # 另外，检查矩形内部是否有"洞"
     # 我们可以检查矩形的中心点是否在多边形内
     center_x = (min_x + max_x) // 2
     center_y = (min_y + max_y) // 2
     if not point_in_polygon(f"{center_x},{center_y}", polygon):
         return False
-    
+
     return True
 
 
 def part2():
-    with open("input.txt", "r", encoding="utf-8") as file:
-        positions = []
-        for line in file:
-            positions.append(line.strip())
-
+    positions = parse_positions()
     valid_areas = []
     for i in range(len(positions)):
         for j in range(i + 1, len(positions)):
@@ -197,51 +197,13 @@ def part2():
             p3 = f"{max_x},{min_y}"  # 右下角
             p4 = f"{max_x},{max_y}"  # 右上角
 
-            # 计算面积
-            area = (max_x - min_x + 1) * (max_y - min_y + 1)
-
             if is_rectangle_inside_polygon(min_x, max_x, min_y, max_y, positions):
-               valid_areas.append(area)
+               valid_areas.append(calc_area(p1, p4))
 
     if valid_areas:
         max_area = max(valid_areas)
         print(f"part2 result: {max_area}")
     else:
         print("No valid rectangles found")
-# def part2():
-#   with open("input.txt", "r", encoding="utf-8") as file:
-#     positions = []
-#     for line in file:
-#       positions.append(line.strip())
-#     areas = []
-#     for i in range(len(positions)):
-#       for j in range(i + 1, len(positions)):
-#         x1, y1 = positions[i].split(",")
-#         x2, y2 = positions[j].split(",")
-
-#         min_x = min(x1, x2)
-#         max_x = max(x1, x2)
-#         min_y = min(y1, y2)
-#         max_y = max(y1, y2)
-
-#         # 四个顶点
-#         p1 = f"{min_x},{min_y}"  # 左下角
-#         p2 = f"{min_x},{max_y}"  # 左上角
-#         p3 = f"{max_x},{min_y}"  # 右下角
-#         p4 = f"{max_x},{max_y}"  # 右上角
-
-#         areas.append(((p1, p2, p3, p4), calc_area(positions[i], positions[j])))
-#         # areas.append(((positions[i], positions[j]), calc_area(positions[i], positions[j])))
-#     valid_areas = []
-#     for (p1,p2,p3,p4), area in areas:
-#       if point_in_polygon(p1, positions) and point_in_polygon(p2, positions) and point_in_polygon(p3, positions) and point_in_polygon(p4, positions):
-#         valid_areas.append(area)
-#     max_area = sorted(valid_areas, reverse=True)[0]
-
-#     print(f"part2 result: {max_area}")
 
 part2()
-# < 4040469624
-# < 4599890450
-# < 4599890450
-# x 4748380670
